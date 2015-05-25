@@ -8,8 +8,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/BenSpeakman/sendsh.it"
+    "url": "https://github.com/threesquared/sendsh.it"
   },
+  "homepage": "https://sendsh.it/",
   "author": "Ben Speakman",
   "license": "MIT",
   "dependencies": {
