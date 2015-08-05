@@ -14,7 +14,7 @@ var db_host = process.env.OPENSHIFT_MONGODB_DB_HOST || '127.0.0.1';
 var db_port = process.env.OPENSHIFT_MONGODB_DB_PORT || 27017;
 var db_name = process.env.OPENSHIFT_APP_NAME || 'sendshit';
 var db_user = process.env.OPENSHIFT_MONGODB_DB_USERNAME || 'admin';
-var db_pass = process.env.OPENSHIFT_MONGODB_DB_PASSWORD || null;
+var db_pass = process.env.OPENSHIFT_MONGODB_DB_PASSWORD || '123456';
 
 var db  = new mongo.Db(db_name, new mongo.Server(db_host, db_port), { safe : false });
 var gfs = new Grid(db, mongo);

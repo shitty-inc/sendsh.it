@@ -1,0 +1,27 @@
+{
+  "name": "sendsh.it",
+  "version": "1.0.0",
+  "homepage": "https://github.com/threesquared/sendsh.it",
+  "authors": [
+    "Ben Speakman <ben@cyber-duck.co.uk>"
+  ],
+  "description": "Send and recieve files encrypted in the browser",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.3",
+    "angular-route": "~1.4.3",
+    "triplesec": "~3.0.20",
+    "ngprogress-lite": "~1.0.7",
+    "bootstrap-css-only": "~3.3.4",
+    "file-saver.js": "~1.20150507.2",
+    "angular-sanitize": "~1.4.3"
+  },
+  "main": "server.js"
+}
