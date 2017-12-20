@@ -9,7 +9,7 @@ Files are deleted after being downloaded or once they are over 24 hours old.
  * `git clone git@github.com:threesquared/sendsh.it.git`
  * `npm install`
  * `gulp`
- * `node server.js`
+ * `npm start`
 
 ## Configure
 Set your mongodb and express parameters in the top of server.js.

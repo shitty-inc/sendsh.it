@@ -23,5 +23,5 @@
     "file-saver.js": "~1.20150507.2",
     "angular-sanitize": "~1.4.3"
   },
-  "main": "server.js"
+  "main": "server/dist/server.lambda.js"
 }
