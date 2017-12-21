@@ -2,6 +2,7 @@ import express from 'express';
 import multiparty from 'multiparty';
 import shortid from 'shortid';
 import AWS from 'aws-sdk';
+import fs from 'fs';
 
 const s3 = new AWS.S3();
 const app = express();
@@ -19,24 +20,29 @@ app.post('/upload', (req, res) => {
         res.status(400).json({
             file: 'File is too large.'
         });
-    }).on('part', part => {
-        s3.putObject({
+    }).parse(req, function (err, fields, files) {
+        const upload = files.file[0];
+
+        s3.upload({
             Bucket: bucket,
             Key: slug,
-            Body: part,
-            ContentLength: part.byteCount,
+            Body: fs.createReadStream(upload.path)
         }, err => {
             if (err) {
-                return res.status(500).json({
+                console.log(err);
+
+                res.status(500).json({
                     file: 'Could not upload file.'
                 });
-            };
+            } else {
+                res.json({
+                    id: slug
+                });
 
-            res.json({
-                id: slug
-            });
+                fs.unlink(upload.path);
+            }
         });
-    }).parse(req);
+    });
 });
 
 app.get('/download', function(req, res) {
@@ -52,7 +58,10 @@ app.get('/download', function(req, res) {
             });
         }
 
-        const stream = s3.getObject(params).createReadStream();
+        const stream = s3.getObject(params).on('httpHeaders', (statusCode, headers) => {
+            res.set('Content-Length', headers['content-length']);
+            res.set('Content-Type', headers['content-type']);
+        }).createReadStream();
 
         stream.on('error', () => {
             return res.json({

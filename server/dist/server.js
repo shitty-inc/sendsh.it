@@ -16,6 +16,10 @@ var _awsSdk = require('aws-sdk');
 
 var _awsSdk2 = _interopRequireDefault(_awsSdk);
 
+var _fs = require('fs');
+
+var _fs2 = _interopRequireDefault(_fs);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var s3 = new _awsSdk2.default.S3();
@@ -34,24 +38,29 @@ app.post('/upload', function (req, res) {
         res.status(400).json({
             file: 'File is too large.'
         });
-    }).on('part', function (part) {
-        s3.putObject({
+    }).parse(req, function (err, fields, files) {
+        var upload = files.file[0];
+
+        s3.upload({
             Bucket: bucket,
             Key: slug,
-            Body: part,
-            ContentLength: part.byteCount
+            Body: _fs2.default.createReadStream(upload.path)
         }, function (err) {
             if (err) {
-                return res.status(500).json({
+                console.log(err);
+
+                res.status(500).json({
                     file: 'Could not upload file.'
                 });
-            };
+            } else {
+                res.json({
+                    id: slug
+                });
 
-            res.json({
-                id: slug
-            });
+                _fs2.default.unlink(upload.path);
+            }
         });
-    }).parse(req);
+    });
 });
 
 app.get('/download', function (req, res) {
@@ -67,7 +76,10 @@ app.get('/download', function (req, res) {
             });
         }
 
-        var stream = s3.getObject(params).createReadStream();
+        var stream = s3.getObject(params).on('httpHeaders', function (statusCode, headers) {
+            res.set('Content-Length', headers['content-length']);
+            res.set('Content-Type', headers['content-type']);
+        }).createReadStream();
 
         stream.on('error', function () {
             return res.json({
