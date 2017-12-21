@@ -1,6 +1,6 @@
 {
   "name": "sendsh.it",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Send and recieve files encrypted in the browser",
   "main": "server/dist/server.lambda.js",
   "scripts": {
