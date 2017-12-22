@@ -1,10 +1,15 @@
 {
   "name": "sendsh.it",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Send and recieve files encrypted in the browser",
-  "main": "server.js",
+  "main": "lambda.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "npm run build && node ./local.js",
+    "build": "./node_modules/.bin/babel ./server/src --experimental --source-maps-inline -d ./server/dist",
+    "watch": "nodemon ./local.js --exec babel-node",
+    "deploy": "npm run build && npm run package && npm run lambda && rm lambda.zip",
+    "package": "zip -q -r lambda.zip *",
+    "lambda": "AWS_DEFAULT_PROFILE=personal aws lambda update-function-code --function-name sendshit --region eu-west-1 --zip-file fileb://lambda.zip"
   },
   "repository": {
     "type": "git",
@@ -14,9 +19,9 @@
   "author": "Ben Speakman",
   "license": "MIT",
   "dependencies": {
-    "cron": "^1.0.9",
+    "aws-sdk": "^2.139.0",
+    "aws-serverless-express": "^3.0.2",
     "express": "^4.12.4",
-    "gridfs-stream": "^1.1.1",
     "gulp": "^3.8.11",
     "gulp-bower": "0.0.10",
     "gulp-concat": "^2.5.2",
@@ -24,8 +29,12 @@
     "gulp-order": "^1.1.1",
     "gulp-uglify": "^1.2.0",
     "main-bower-files": "^2.9.0",
-    "mongodb": "^2.0.33",
     "multiparty": "^4.1.2",
     "shortid": "^2.2.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "nodemon": "^1.13.3"
   }
 }

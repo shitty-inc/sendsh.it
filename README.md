@@ -9,12 +9,7 @@ Files are deleted after being downloaded or once they are over 24 hours old.
  * `git clone git@github.com:threesquared/sendsh.it.git`
  * `npm install`
  * `gulp`
- * `node server.js`
-
-## Configure
-Set your mongodb and express parameters in the top of server.js.
-
-The server is also configured to read the env parameters from an [Openshift](https://www.openshift.com/) environment. There is also an openshift deploy hook to run gulp.
+ * `npm start`
 
 ## Disclaimer
 I am not an expert in cryptography. If you have something important to keep secret please think about using a peer reviewed and audited service. This is just an experiment with in browser encryption and node.js.
