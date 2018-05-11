@@ -1,6 +1,1 @@
-node_modules
-.bower-*/
-bower_components
-public/css/styles.css
-public/js/scripts.js
-lambda.zip
+.serverless

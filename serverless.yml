@@ -1,0 +1,26 @@
+service: sendshit
+plugins:
+  - serverless-finch
+provider:
+  name: aws
+  runtime: go1.x
+  region: eu-west-1
+  memorySize: 128
+package:
+ exclude:
+   - ./**
+ include:
+   - ./server/bin/**
+functions:
+  server:
+    handler: server/bin/server
+    description: Sendsh.it File Transfer
+    #role: arn:aws:iam::068310699258:role/sendshitLambdaRole
+    events:
+      - http: ANY {proxy+}
+custom:
+  client:
+    bucketName: sendsh.it
+    distributionFolder: client/build
+    indexDocument: index.html
+    errorDocument: index.html
