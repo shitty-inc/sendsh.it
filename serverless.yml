@@ -16,11 +16,17 @@ functions:
     handler: server/bin/server
     description: Sendsh.it File Transfer
     #role: arn:aws:iam::068310699258:role/sendshitLambdaRole
+    environment:
+      REGION: eu-west-1
+      BUCKET: sendsh.it
     events:
-      - http: ANY {proxy+}
+      - http:
+          method: any
+          path: /{proxy+}
+          cors: true
 custom:
   client:
-    bucketName: sendsh.it
+    bucketName: sendsh.it-frontend
     distributionFolder: client/build
     indexDocument: index.html
     errorDocument: index.html

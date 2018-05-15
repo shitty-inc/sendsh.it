@@ -11,6 +11,7 @@ import (
 	"github.com/teris-io/shortid"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -35,13 +36,13 @@ func downloadHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 
     sess, _ := session.NewSession(&aws.Config{
-        Region: aws.String("eu-west-1")},
+        Region: aws.String(os.Getenv("REGION"))},
     )
 
     svc := s3.New(sess)
 
 	result, err := svc.GetObject(&s3.GetObjectInput{
-		Bucket: aws.String("sendsh.it"),
+		Bucket: aws.String(os.Getenv("BUCKET")),
 		Key:    aws.String(id),
 	})
 
@@ -63,7 +64,7 @@ func downloadHandler(writer http.ResponseWriter, request *http.Request) {
 	http.ServeContent(writer, request, "file", time.Now(), reader)
 
 	_, err = svc.DeleteObject(&s3.DeleteObjectInput{
-        Bucket: aws.String("sendsh.it"),
+        Bucket: aws.String(os.Getenv("BUCKET")),
         Key:    aws.String(id),
     })
 
@@ -89,7 +90,7 @@ func uploadHandler(writer http.ResponseWriter, request *http.Request) {
 	uploader := s3manager.NewUploader(sess)
 
 	_, uploadErr := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String("sendsh.it"),
+		Bucket: aws.String(os.Getenv("BUCKET")),
 		Key:    aws.String(slug),
 		Body:   file,
 	})
@@ -123,6 +124,7 @@ func returnErrorStatus(writer http.ResponseWriter, status int) {
  */
 func returnJson(writer http.ResponseWriter, response interface{}) {
 	writer.Header().Set("Content-Type", "application/json")
+	writer.Header().Set("Access-Control-Allow-Origin", "*")
 	json.NewEncoder(writer).Encode(response)
 }
 
