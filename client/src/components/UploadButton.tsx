@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { readAsDataURL } from '../lib/fileReader'
+import { readAsDataURL } from '../lib/file'
 
 export interface UploadedFileData { name: string, url: string }
 export interface UploadButtonProps { handleUpload: (data: UploadedFileData) => void; }

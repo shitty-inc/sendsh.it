@@ -1,11 +1,11 @@
 service: sendshit
-plugins:
-  - serverless-finch
 provider:
   name: aws
   runtime: go1.x
   region: eu-west-1
   memorySize: 128
+plugins:
+  - serverless-finch
 package:
  exclude:
    - ./**
@@ -22,8 +22,38 @@ functions:
     events:
       - http:
           method: any
-          path: /{proxy+}
+          path: /api/{proxy+}
           cors: true
+resources:
+  Resources:
+    ProxyResource:
+      Type: AWS::ApiGateway::Resource
+      Properties:
+        ParentId:
+          Fn::GetAtt:
+            - ApiGatewayRestApi
+            - RootResourceId
+        PathPart: '{proxy+}'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+    ProxyMethod:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        ResourceId:
+          Ref: ProxyResource
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        AuthorizationType: NONE
+        HttpMethod: ANY
+        MethodResponses:
+          - StatusCode: 200
+        Integration:
+          IntegrationHttpMethod: ANY
+          Type: HTTP_PROXY
+          Uri: http://sendsh.it-frontend.s3-website-eu-west-1.amazonaws.com
+          PassthroughBehavior: WHEN_NO_MATCH
+          IntegrationResponses:
+            - StatusCode: 200
 custom:
   client:
     bucketName: sendsh.it-frontend

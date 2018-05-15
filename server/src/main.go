@@ -124,7 +124,6 @@ func returnErrorStatus(writer http.ResponseWriter, status int) {
  */
 func returnJson(writer http.ResponseWriter, response interface{}) {
 	writer.Header().Set("Content-Type", "application/json")
-	writer.Header().Set("Access-Control-Allow-Origin", "*")
 	json.NewEncoder(writer).Encode(response)
 }
 
@@ -132,8 +131,8 @@ func returnJson(writer http.ResponseWriter, response interface{}) {
  * Main handler function
  */
 func main() {
-	http.HandleFunc("/download", downloadHandler)
-	http.HandleFunc("/upload", uploadHandler)
+	http.HandleFunc("/api/download", downloadHandler)
+	http.HandleFunc("/api/upload", uploadHandler)
 
 	algnhsa.ListenAndServe(http.DefaultServeMux, nil)
 }

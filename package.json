@@ -3,6 +3,10 @@
   "description": "",
   "version": "0.1.0",
   "dependencies": {},
+  "scripts": {
+    "build": "GOPATH=~/.go cd ~/.go/src/server && make",
+    "deploy": "AWS_PROFILE=personal sls deploy"
+  },
   "devDependencies": {
     "serverless-finch": "^2.1.2"
   }
