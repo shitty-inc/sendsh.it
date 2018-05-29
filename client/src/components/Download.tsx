@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import * as filesaver from 'file-saver';
 import * as parseDataUri from 'parse-data-uri';
 import * as React from 'react';
@@ -7,9 +7,10 @@ import { decrypt } from '../lib/crypto';
 import { b64toBlob } from '../lib/file';
 
 export interface DownloadRouteProps { id: string; key: string; }
-export interface DownloadProps extends RouteComponentProps<DownloadRouteProps> { setProgress: any; }
+export interface DownloadProps extends RouteComponentProps<DownloadRouteProps> { setProgress: (progress: number) => void; }
+export interface DownloadState { message: string; }
 
-class Download extends React.Component<DownloadProps, any> {
+class Download extends React.Component<DownloadProps, DownloadState> {
 
 	/**
 	 * Component constructor.
@@ -41,11 +42,13 @@ class Download extends React.Component<DownloadProps, any> {
 	 * @return {void}
 	 */
 	public async handleDownload(id: string, key: string) {
-		const response = await axios.get('/api/download', {
-			params: {
+		const config: AxiosRequestConfig = {
+            params: {
 				id,
 			}
-		});
+        }
+
+		const response: AxiosResponse<string> = await axios.get('/api/download', config);
 
 		const buffer: Buffer = new Buffer(response.data, 'hex');
 		const decrypted: Buffer = await decrypt(buffer, key, obj => {
@@ -53,7 +56,7 @@ class Download extends React.Component<DownloadProps, any> {
 		});
 
 		const { url, name } = JSON.parse(decrypted.toString());
-		const parsedUri = parseDataUri(url);
+		const parsedUri: any = parseDataUri(url);
 		const blob: Blob = b64toBlob(parsedUri.data.toString(), parsedUri.mimeType);
 
 		filesaver.saveAs(blob, name);

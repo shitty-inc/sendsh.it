@@ -58,10 +58,10 @@ export const b64toBlob = (b64Data: string, type: string = '', sliceSize: number 
  * @return {number}
  */
 export const stagePercent = (stageCompletedPercent: number, numberOfStages: number, currentStageNumber: number): number => {
-    const stageTotalFraction: number = 1 / numberOfStages;
-    const stageCompletedFraction: number = stageCompletedPercent / 100;
-    let totalCompletedFraction: number = (stageCompletedFraction * stageTotalFraction) * 100;
-    totalCompletedFraction += (stageCompletedFraction * currentStageNumber)
+    const totalStagePercent: number = 1 / numberOfStages;
+    let totalOverallPercent: number = (stageCompletedPercent * totalStagePercent) * 100;
 
-    return totalCompletedFraction * 100;
+    totalOverallPercent = totalOverallPercent += (totalStagePercent * currentStageNumber);
+
+    return totalOverallPercent * 100;
 }

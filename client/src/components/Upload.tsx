@@ -1,10 +1,11 @@
-// import axios from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import * as React from 'react';
 import { encrypt, generatePassword } from '../lib/crypto';
+import { stagePercent } from '../lib/file';
 import UploadButton, { UploadedFileData } from './UploadButton';
 
-export interface UploadState { url: any; progress: number; uploaded: boolean; }
-export interface UploadProps { setProgress: any; }
+export interface UploadProps { setProgress: (progress: number) => void; }
+export interface UploadState { url: string; progress: number; uploaded: boolean; }
 
 class Upload extends React.Component<UploadProps, UploadState> {
 
@@ -42,34 +43,32 @@ class Upload extends React.Component<UploadProps, UploadState> {
 
         const encrypted: Buffer = await encrypt(new Buffer(JSON.stringify(data)), password, obj => {
             const stageCompletedPercent: number = (obj.i / obj.total) / 100;
-            const totalStagePercent: number = 0.125;
-            let totalOverallPercent: number = (stageCompletedPercent * totalStagePercent) * 100;
+            let currentStageNumber: number;
 
-            if (obj.what === 'scrypt') {
-                 totalOverallPercent += totalStagePercent;
+            switch(obj.what) {
+                case 'scrypt':
+                    currentStageNumber = 1;
+                    break;
+                case 'pbkdf2 (pass 2)':
+                    currentStageNumber = 2;
+                    break;
+                case 'salsa20':
+                    currentStageNumber = 3;
+                    break;
+                case 'twofish':
+                    currentStageNumber = 4;
+                    break;
+                case 'aes':
+                    currentStageNumber = 5;
+                    break;
+                case 'HMAC-SHA512-SHA3':
+                    currentStageNumber = 6;
+                    break;
+                default:
+                    currentStageNumber = 0;
             }
 
-            if (obj.what === 'pbkdf2 (pass 2)') {
-                 totalOverallPercent = totalOverallPercent += (totalStagePercent * 2);
-            }
-
-            if (obj.what === 'salsa20') {
-                 totalOverallPercent = totalOverallPercent += (totalStagePercent * 3);
-            }
-
-            if (obj.what === 'twofish') {
-                 totalOverallPercent = totalOverallPercent += (totalStagePercent * 4);
-            }
-
-            if (obj.what === 'aes') {
-                 totalOverallPercent = totalOverallPercent += (totalStagePercent * 5);
-            }
-
-            if (obj.what === 'HMAC-SHA512-SHA3') {
-                 totalOverallPercent = totalOverallPercent += (totalStagePercent * 6);
-            }
-
-            this.props.setProgress(totalOverallPercent * 100);
+            this.props.setProgress(stagePercent(stageCompletedPercent, 8, currentStageNumber));
         });
 
         const formData: FormData = new FormData();
@@ -77,19 +76,15 @@ class Upload extends React.Component<UploadProps, UploadState> {
 
         formData.append('upload', blob, 'encrypted');
 
-        /*const config = {
+        const config: AxiosRequestConfig = {
             onUploadProgress: (progressEvent: any) => {
-                const uploadedPercent = (progressEvent.loaded * 100) / progressEvent.total;
-                const uploadedFraction = uploadedPercent / 100;
-                const totalStageFraction: number = 0.125;
-                let totalOverallFraction = uploadedFraction * totalStageFraction;
-                totalOverallFraction = totalOverallFraction + 0.875;
+                const uploadedPercent: number = (progressEvent.loaded * 100) / progressEvent.total;
 
-                this.props.setProgress(totalOverallFraction * 100);
+                this.props.setProgress(stagePercent(uploadedPercent, 8, 7));
             }
-        }*/
+        }
 
-        const response = {data: {id: 'lol'}};// await axios.post('/api/upload', formData, config);
+        const response: AxiosResponse<{ id: string }> = await axios.post('/api/upload', formData, config)
 
         this.setState({
             uploaded: true,
@@ -131,7 +126,13 @@ class Upload extends React.Component<UploadProps, UploadState> {
 
         return (
             <div className="input-group">
-                <input type="text" ref={ this.downloadLink } className="form-control" value={ this.state.url } />
+                <input
+                    readOnly={ true }
+                    type="text"
+                    ref={ this.downloadLink }
+                    className="form-control"
+                    value={ this.state.url }
+                />
                 <span className="input-group-btn">
                     <button className="btn btn-default" type="button">
                         <span className="glyphicon glyphicon-copy" />
