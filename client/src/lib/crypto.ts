@@ -6,7 +6,7 @@ import * as triplesec from 'triplesec';
  * @param  {number} data
  * @return {Promise<string>}
  */
-export const generate = (n: number = 24): Promise<string> =>
+export const generatePassword = (n: number = 24): Promise<string> =>
 	new Promise(resolve => triplesec.prng.generate(n, (words: WordArray) =>
 		resolve(words.to_hex())));
 

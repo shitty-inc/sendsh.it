@@ -9,9 +9,11 @@ class Footer extends React.Component {
 	 */
 	public render() {
 		return (
-			<div>
-				<p><a href="http://3sq.re" target="_blank">Ben Speakman</a></p>
-			</div>
+			<footer id="footer">
+				<div className="container text-center">
+					<p><a href="https://github.com/threesquared/sendsh.it" target="_blank">About</a></p>
+				</div>
+			</footer>
 		);
 	}
 }

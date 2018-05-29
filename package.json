@@ -4,8 +4,12 @@
   "version": "0.1.0",
   "dependencies": {},
   "scripts": {
-    "build": "GOPATH=~/.go cd ~/.go/src/server && make",
-    "deploy": "AWS_PROFILE=personal sls deploy"
+    "build:server": "export GOPATH=~/.go && cd ~/.go/src/server && make",
+    "build:client": "cd client && npm run build",
+    "deploy:server": "AWS_PROFILE=personal sls deploy",
+    "deploy:client": "AWS_PROFILE=personal sls client deploy",
+    "build": "npm run build:server && npm run build:client",
+    "deploy": "npm run build && npm run deploy:server && npm run deploy:client"
   },
   "devDependencies": {
     "serverless-finch": "^2.1.2"

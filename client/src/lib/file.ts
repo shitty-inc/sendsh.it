@@ -1,7 +1,8 @@
 /**
  * Read a file as a data URL.
  *
- * @type {[type]}
+ * @param {File} file
+ * @return {Promise<string>}
  */
 export const readAsDataURL = (file: File): Promise<string> => {
     const reader: FileReader = new FileReader();
@@ -23,11 +24,14 @@ export const readAsDataURL = (file: File): Promise<string> => {
 /**
  * Convert base64 string to Blob.
  *
- * @type {[type]}
+ * @param {string} b64Data
+ * @param {string} type
+ * @param {number} sliceSize
+ * @return {Blob}
  */
 export const b64toBlob = (b64Data: string, type: string = '', sliceSize: number = 512): Blob => {
-    const byteCharacters = atob(b64Data);
-    const byteArrays = [];
+    const byteCharacters: string = atob(b64Data);
+    const byteArrays: Uint8Array[] = [];
 
     for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
         const slice = byteCharacters.slice(offset, offset + sliceSize);
@@ -44,3 +48,20 @@ export const b64toBlob = (b64Data: string, type: string = '', sliceSize: number 
         type,
     });
 };
+
+/**
+ * Find out the total complete percentage given a number of stages and the current stages progress.
+ *
+ * @param {number} stageCompletedPercent
+ * @param {number} numberOfStages
+ * @param {number} currentStageNumber
+ * @return {number}
+ */
+export const stagePercent = (stageCompletedPercent: number, numberOfStages: number, currentStageNumber: number): number => {
+    const stageTotalFraction: number = 1 / numberOfStages;
+    const stageCompletedFraction: number = stageCompletedPercent / 100;
+    let totalCompletedFraction: number = (stageCompletedFraction * stageTotalFraction) * 100;
+    totalCompletedFraction += (stageCompletedFraction * currentStageNumber)
+
+    return totalCompletedFraction * 100;
+}

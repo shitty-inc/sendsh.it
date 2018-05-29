@@ -1,5 +1,71 @@
+html, body {
+    height: 100%;
+}
+
 body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+    background-color: #EEEEEE;
+    font-family: 'Open Sans', sans-serif;
+    color: #444546;
+}
+
+#footer {
+    height: 30px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+#footer a {
+    color: #999999;
+}
+
+.logo {
+    margin-bottom: 15px;
+}
+
+.logo h1 {
+    margin-top: 50px;
+    font-size: 64px;
+    margin-bottom: 0px
+}
+
+.logo span {
+    color: #3cb8f1;
+}
+
+.logo small {
+    color: #696758;
+}
+
+p {
+    font-size:14px;
+}
+
+a, a:visited, a:hover, a:active {
+    color: #000;
+}
+
+.h1, .h1:visited, .h1:hover, .h1:active {
+    color: inherit;
+    text-decoration: none;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
 }

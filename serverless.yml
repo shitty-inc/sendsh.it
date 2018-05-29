@@ -4,13 +4,13 @@ provider:
   runtime: go1.x
   region: eu-west-1
   memorySize: 128
-plugins:
-  - serverless-finch
 package:
  exclude:
    - ./**
  include:
    - ./server/bin/**
+plugins:
+  - serverless-finch
 functions:
   server:
     handler: server/bin/server
@@ -44,13 +44,13 @@ resources:
         RestApiId:
           Ref: ApiGatewayRestApi
         AuthorizationType: NONE
-        HttpMethod: ANY
+        HttpMethod: GET
         MethodResponses:
           - StatusCode: 200
         Integration:
-          IntegrationHttpMethod: ANY
+          IntegrationHttpMethod: GET
           Type: HTTP_PROXY
-          Uri: http://sendsh.it-frontend.s3-website-eu-west-1.amazonaws.com
+          Uri: 'http://sendsh.it-frontend.s3-website-eu-west-1.amazonaws.com/{proxy}'
           PassthroughBehavior: WHEN_NO_MATCH
           IntegrationResponses:
             - StatusCode: 200

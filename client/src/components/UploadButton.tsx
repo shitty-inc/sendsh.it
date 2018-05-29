@@ -7,20 +7,29 @@ export interface UploadButtonState { message: string; }
 
 class UploadButton extends React.Component<UploadButtonProps, UploadButtonState> {
 
+	/**
+	 * Component constructor.
+	 */
 	constructor(props: UploadButtonProps) {
 		super(props);
 
 		this.state = {
-			message: 'test',
+			message: 'Pick a file (5MB)',
 		}
 
     	this.handleChange = this.handleChange.bind(this);
   	}
 
+  	/**
+  	 * Handle the file selection.
+  	 *
+  	 * @param  {FormEvent} event
+  	 * @return {void}
+  	 */
 	public async handleChange(event: React.FormEvent<HTMLInputElement>) {
 		const files: FileList | null = event.currentTarget.files
 
-		if (files === null) {
+		if (files === null || files.length < 1) {
 			return;
 		}
 
@@ -35,12 +44,21 @@ class UploadButton extends React.Component<UploadButtonProps, UploadButtonState>
 		const name: string = file.name;
 		const url: string = await readAsDataURL(file);
 
+		this.setState({
+			message: name,
+		});
+
 		this.props.handleUpload({
 			name,
 			url
 		});
 	}
 
+	/**
+	 * Render the component.
+	 *
+	 * @return {JSX}
+	 */
   	public render() {
 	    return (
 			<span className="btn btn-default btn-file">
