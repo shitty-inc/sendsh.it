@@ -5,7 +5,7 @@ import { stagePercent } from '../lib/file';
 import UploadButton, { UploadedFileData } from './UploadButton';
 
 export interface UploadProps { setProgress: (progress: number) => void; }
-export interface UploadState { url: string; progress: number; uploaded: boolean; }
+export interface UploadState { url: string; progress: number; uploaded: boolean; message: string; }
 
 class Upload extends React.Component<UploadProps, UploadState> {
 
@@ -17,12 +17,20 @@ class Upload extends React.Component<UploadProps, UploadState> {
     private downloadLink: React.RefObject<HTMLInputElement>;
 
     /**
+     * Order of progress events.
+     *
+     * @type {string[]}
+     */
+    private progressOrder: string[] = ['pbkdf2 (pass 1)', 'scrypt', 'pbkdf2 (pass 2)', 'salsa20', 'twofish', 'aes', 'HMAC-SHA512-SHA3', 'upload'];
+
+    /**
      * Component constructor.
      */
     public constructor(props: UploadProps) {
         super(props);
 
         this.state = {
+            message: '',
             progress: 0,
             uploaded: false,
             url: '',
@@ -42,37 +50,15 @@ class Upload extends React.Component<UploadProps, UploadState> {
         const password: string = await generatePassword();
 
         const encrypted: Buffer = await encrypt(new Buffer(JSON.stringify(data)), password, obj => {
-            const stageCompletedPercent: number = (obj.i / obj.total) / 100;
-            let currentStageNumber: number;
+            const stageCompletedPercent: number = (obj.i / obj.total) * 100;
 
-            switch(obj.what) {
-                case 'scrypt':
-                    currentStageNumber = 1;
-                    break;
-                case 'pbkdf2 (pass 2)':
-                    currentStageNumber = 2;
-                    break;
-                case 'salsa20':
-                    currentStageNumber = 3;
-                    break;
-                case 'twofish':
-                    currentStageNumber = 4;
-                    break;
-                case 'aes':
-                    currentStageNumber = 5;
-                    break;
-                case 'HMAC-SHA512-SHA3':
-                    currentStageNumber = 6;
-                    break;
-                default:
-                    currentStageNumber = 0;
-            }
-
-            this.props.setProgress(stagePercent(stageCompletedPercent, 8, currentStageNumber));
+            this.props.setProgress(stagePercent(stageCompletedPercent, this.progressOrder.length, this.progressOrder.indexOf(obj.what)));
         });
 
         const formData: FormData = new FormData();
-        const blob: Blob = new Blob([encrypted.toString('hex')], { type: 'application/octet-stream' });
+        const blob: Blob = new Blob([encrypted.toString('hex')], {
+            type: 'application/octet-stream',
+        });
 
         formData.append('upload', blob, 'encrypted');
 
@@ -80,11 +66,19 @@ class Upload extends React.Component<UploadProps, UploadState> {
             onUploadProgress: (progressEvent: any) => {
                 const uploadedPercent: number = (progressEvent.loaded * 100) / progressEvent.total;
 
-                this.props.setProgress(stagePercent(uploadedPercent, 8, 7));
+                this.props.setProgress(stagePercent(uploadedPercent, this.progressOrder.length, this.progressOrder.indexOf('upload')));
             }
         }
 
-        const response: AxiosResponse<{ id: string }> = await axios.post('/api/upload', formData, config)
+        let response: AxiosResponse<{ id: string }>;
+
+        try {
+            response = await axios.post('/api/upload', formData, config);
+        } catch (e) {
+            return this.setState({
+                message: e.message,
+            })
+        }
 
         this.setState({
             uploaded: true,
@@ -150,6 +144,7 @@ class Upload extends React.Component<UploadProps, UploadState> {
     public render() {
         return (
             <div className="text-center col-md-6 col-md-offset-3">
+                <p>{ this.state.message }</p>
                 { this.renderUploadButton() }
                 { this.renderDownloadLink() }
             </div>

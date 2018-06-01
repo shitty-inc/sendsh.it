@@ -62,6 +62,7 @@ class UploadButton extends React.Component<UploadButtonProps, UploadButtonState>
   	public render() {
 	    return (
 			<span className="btn btn-default btn-file">
+				<span className="glyphicon glyphicon-cloud-upload" />
 				{ this.state.message }
 				<input type="file" onChange={ this.handleChange } />
 			</span>

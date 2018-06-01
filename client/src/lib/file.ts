@@ -22,34 +22,6 @@ export const readAsDataURL = (file: File): Promise<string> => {
 };
 
 /**
- * Convert base64 string to Blob.
- *
- * @param {string} b64Data
- * @param {string} type
- * @param {number} sliceSize
- * @return {Blob}
- */
-export const b64toBlob = (b64Data: string, type: string = '', sliceSize: number = 512): Blob => {
-    const byteCharacters: string = atob(b64Data);
-    const byteArrays: Uint8Array[] = [];
-
-    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-        const slice = byteCharacters.slice(offset, offset + sliceSize);
-        const byteNumbers = new Array(slice.length);
-
-        for (let i = 0; i < slice.length; i++) {
-            byteNumbers[i] = slice.charCodeAt(i);
-        }
-
-        byteArrays.push(new Uint8Array(byteNumbers));
-    }
-
-    return new Blob(byteArrays, {
-        type,
-    });
-};
-
-/**
  * Find out the total complete percentage given a number of stages and the current stages progress.
  *
  * @param {number} stageCompletedPercent
@@ -58,10 +30,10 @@ export const b64toBlob = (b64Data: string, type: string = '', sliceSize: number 
  * @return {number}
  */
 export const stagePercent = (stageCompletedPercent: number, numberOfStages: number, currentStageNumber: number): number => {
-    const totalStagePercent: number = 1 / numberOfStages;
-    let totalOverallPercent: number = (stageCompletedPercent * totalStagePercent) * 100;
+    const totalStageFraction: number = (100 / numberOfStages) / 100;
+    let totalOverallFraction: number = (stageCompletedPercent / 100) * totalStageFraction;
 
-    totalOverallPercent = totalOverallPercent += (totalStagePercent * currentStageNumber);
+    totalOverallFraction = totalOverallFraction += (totalStageFraction * currentStageNumber);
 
-    return totalOverallPercent * 100;
+    return totalOverallFraction * 100;
 }

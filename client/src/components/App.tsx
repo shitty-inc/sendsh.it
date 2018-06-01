@@ -23,6 +23,7 @@ class App extends React.Component<{}, AppState> {
 
         this.setProgress = this.setProgress.bind(this);
         this.renderUpload = this.renderUpload.bind(this);
+        this.renderDownload = this.renderDownload.bind(this);
     }
 
     /**
