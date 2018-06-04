@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import * as clipboard from 'clipboard';
 import * as React from 'react';
 import { encrypt, generatePassword } from '../lib/crypto';
 import { stagePercent } from '../lib/file';
@@ -14,14 +15,37 @@ class Upload extends React.Component<UploadProps, UploadState> {
      *
      * @type {HTMLInputElement}
      */
-    private downloadLink: React.RefObject<HTMLInputElement>;
+    public downloadLink: React.RefObject<HTMLInputElement>;
 
     /**
-     * Order of progress events.
+     * Button element to copy the download link.
+     *
+     * @type {HTMLButtonElement}
+     */
+    public copyButton: React.RefObject<HTMLButtonElement>;
+
+    /**
+     * Clipboard library
+     * 
+     * @type {clipboard}
+     */
+    public clipboard: clipboard;
+
+    /**
+     * Order of upload stage events.
      *
      * @type {string[]}
      */
-    private progressOrder: string[] = ['pbkdf2 (pass 1)', 'scrypt', 'pbkdf2 (pass 2)', 'salsa20', 'twofish', 'aes', 'HMAC-SHA512-SHA3', 'upload'];
+    private uploadStages: string[] = [
+        'pbkdf2 (pass 1)',
+        'scrypt',
+        'pbkdf2 (pass 2)',
+        'salsa20',
+        'twofish',
+        'aes',
+        'HMAC-SHA512-SHA3',
+        'upload'
+    ];
 
     /**
      * Component constructor.
@@ -38,6 +62,23 @@ class Upload extends React.Component<UploadProps, UploadState> {
 
         this.handleUpload = this.handleUpload.bind(this);
         this.downloadLink = React.createRef();
+        this.copyButton = React.createRef();
+    }
+
+    /**
+     * Bind copy button and select download link text.
+     */
+    public bindCopyButton() {
+        const downloadLink: HTMLInputElement = this.downloadLink.current as HTMLInputElement;
+        const copyButton: HTMLButtonElement = this.copyButton.current as HTMLButtonElement;
+
+        this.clipboard = new clipboard(
+			copyButton, {
+			  target: () => downloadLink
+			}
+        )
+
+        downloadLink.select();
     }
 
     /**
@@ -47,12 +88,16 @@ class Upload extends React.Component<UploadProps, UploadState> {
      * @return {void}
      */
     public async handleUpload(data: UploadedFileData) {
+        this.setState({
+            message: 'Encrypting some shit...',
+        });
+
         const password: string = await generatePassword();
 
         const encrypted: Buffer = await encrypt(new Buffer(JSON.stringify(data)), password, obj => {
             const stageCompletedPercent: number = (obj.i / obj.total) * 100;
 
-            this.props.setProgress(stagePercent(stageCompletedPercent, this.progressOrder.length, this.progressOrder.indexOf(obj.what)));
+            this.props.setProgress(stagePercent(stageCompletedPercent, this.uploadStages.length, this.uploadStages.indexOf(obj.what)));
         });
 
         const formData: FormData = new FormData();
@@ -66,29 +111,36 @@ class Upload extends React.Component<UploadProps, UploadState> {
             onUploadProgress: (progressEvent: any) => {
                 const uploadedPercent: number = (progressEvent.loaded * 100) / progressEvent.total;
 
-                this.props.setProgress(stagePercent(uploadedPercent, this.progressOrder.length, this.progressOrder.indexOf('upload')));
+                if (uploadedPercent !== 100) {
+                    this.props.setProgress(stagePercent(uploadedPercent, this.uploadStages.length, this.uploadStages.indexOf('upload')));
+                }
             }
         }
+
+        this.setState({
+            message: 'Uploading some shit...',
+        });
 
         let response: AxiosResponse<{ id: string }>;
 
         try {
             response = await axios.post('/api/upload', formData, config);
         } catch (e) {
+            this.props.setProgress(0);
+
             return this.setState({
                 message: e.message,
             })
         }
 
         this.setState({
+            message: 'Copy this shit',
             uploaded: true,
             url: `${location.origin}/#/${response.data.id}/${password}`,
         });
 
-        const node: HTMLInputElement | null = this.downloadLink.current;
-        if (node) {
-            node.select();
-        }
+        this.props.setProgress(100);
+        this.bindCopyButton();
     }
 
     /**
@@ -119,7 +171,7 @@ class Upload extends React.Component<UploadProps, UploadState> {
         }
 
         return (
-            <div className="input-group">
+            <div className="input-group col-md-6 col-md-offset-3">
                 <input
                     readOnly={ true }
                     type="text"
@@ -128,7 +180,11 @@ class Upload extends React.Component<UploadProps, UploadState> {
                     value={ this.state.url }
                 />
                 <span className="input-group-btn">
-                    <button className="btn btn-default" type="button">
+                    <button
+                        className="btn btn-default"
+                        type="button"
+                        ref={ this.copyButton }
+                    >
                         <span className="glyphicon glyphicon-copy" />
                     </button>
                 </span>
@@ -143,7 +199,7 @@ class Upload extends React.Component<UploadProps, UploadState> {
      */
     public render() {
         return (
-            <div className="text-center col-md-6 col-md-offset-3">
+            <div className="text-center col-md-12">
                 <p>{ this.state.message }</p>
                 { this.renderUploadButton() }
                 { this.renderDownloadLink() }

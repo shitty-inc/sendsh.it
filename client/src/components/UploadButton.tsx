@@ -14,7 +14,7 @@ class UploadButton extends React.Component<UploadButtonProps, UploadButtonState>
 		super(props);
 
 		this.state = {
-			message: 'Pick a file (5MB)',
+			message: 'Send some shit',
 		}
 
     	this.handleChange = this.handleChange.bind(this);
@@ -62,7 +62,6 @@ class UploadButton extends React.Component<UploadButtonProps, UploadButtonState>
   	public render() {
 	    return (
 			<span className="btn btn-default btn-file">
-				<span className="glyphicon glyphicon-cloud-upload" />
 				{ this.state.message }
 				<input type="file" onChange={ this.handleChange } />
 			</span>

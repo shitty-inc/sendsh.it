@@ -11,7 +11,7 @@ class Header extends React.Component {
 		return (
 			<div className="row logo">
 	      		<div className="col-md-12 text-center">
-		        	<a href="/"><h1 className="h1">send<span>sh.it</span></h1></a>
+		        	<h1 className="h1"><a href="/">send<span>sh.it</span></a></h1>
 	        	</div>
 		    </div>
 		);
