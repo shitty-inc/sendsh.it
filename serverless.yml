@@ -2,7 +2,7 @@ service: sendshit
 provider:
   name: aws
   runtime: go1.x
-  region: eu-west-1
+  region: ${file(./.env.yml):REGION, env:REGION}
   memorySize: 128
 package:
  exclude:
@@ -15,15 +15,16 @@ functions:
   server:
     handler: server/bin/server
     description: Sendsh.it File Transfer
-    #role: arn:aws:iam::068310699258:role/sendshitLambdaRole
+    # role: ${file(./.env.yml):ROLE, env:ROLE}
     environment:
-      REGION: eu-west-1
-      BUCKET: sendsh.it
+      REGION: ${file(./.env.yml):REGION, env:REGION}
+      BUCKET: ${file(./.env.yml):FILE_BUCKET, env:FILE_BUCKET}
     events:
       - http:
           method: any
           path: /api/{proxy+}
-          cors: true
+          cors:
+            origin: '*'
 resources:
   Resources:
     ProxyResource:
@@ -50,13 +51,13 @@ resources:
         Integration:
           IntegrationHttpMethod: GET
           Type: HTTP_PROXY
-          Uri: 'http://sendsh.it-frontend.s3-website-eu-west-1.amazonaws.com/{proxy}'
+          Uri: 'http://${file(./.env.yml):CLIENT_BUCKET, env:CLIENT_BUCKET}.s3-website-${file(./.env.yml):REGION, env:REGION}.amazonaws.com/{proxy}'
           PassthroughBehavior: WHEN_NO_MATCH
           IntegrationResponses:
             - StatusCode: 200
 custom:
   client:
-    bucketName: sendsh.it-frontend
+    bucketName: ${file(./.env.yml):CLIENT_BUCKET, env:CLIENT_BUCKET}
     distributionFolder: client/build
     indexDocument: index.html
     errorDocument: index.html
