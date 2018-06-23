@@ -14,6 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/rs/cors"
 	"github.com/teris-io/shortid"
 )
 
@@ -141,5 +142,7 @@ func main() {
 	http.HandleFunc("/api/download", downloadHandler)
 	http.HandleFunc("/api/upload", uploadHandler)
 
-	algnhsa.ListenAndServe(http.DefaultServeMux, nil)
+	handler := cors.Default().Handler(http.DefaultServeMux)
+
+	algnhsa.ListenAndServe(handler, nil)
 }

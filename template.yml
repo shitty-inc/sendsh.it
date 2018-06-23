@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion : '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Sendsh.it File Transfer
+Resources:
+  Server:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: server/bin/server
+      Runtime: go1.x
+      Environment:
+        Variables:
+          REGION: eu-west-1
+          BUCKET: sendsh.it
+      Events:
+        Event:
+          Type: Api
+          Properties:
+            Path: '/api/{proxy+}'
+            Method: any

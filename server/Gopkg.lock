@@ -66,6 +66,12 @@
   revision = "0b12d6b5"
 
 [[projects]]
+  name = "github.com/rs/cors"
+  packages = ["."]
+  revision = "ca016a06a5753f8ba03029c0aa5e54afb1bf713f"
+  version = "v1.4.0"
+
+[[projects]]
   name = "github.com/teris-io/shortid"
   packages = ["."]
   revision = "6c56cef5189ca1b3d5ef01dc07f4d611dfc0bb33"
@@ -74,6 +80,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a9e7595b1c944c9edb398cfcb292f5cfb6c3653a5c571daf95080dbfbe0c9834"
+  inputs-digest = "df718966108c7af17b82a91b1c1ebe37863ae7454feb01c83af506f9791fa10d"
   solver-name = "gps-cdcl"
   solver-version = 1
