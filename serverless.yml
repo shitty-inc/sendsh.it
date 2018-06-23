@@ -4,6 +4,12 @@ provider:
   runtime: go1.x
   region: ${file(./.env.yml):REGION, env:REGION}
   memorySize: 128
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource: "arn:aws:s3:::${file(./.env.yml):FILE_BUCKET, env:FILE_BUCKET}/*"
 package:
  exclude:
    - ./**
@@ -15,7 +21,6 @@ functions:
   server:
     handler: server/bin/server
     description: Sendsh.it File Transfer
-    # role: ${file(./.env.yml):ROLE, env:ROLE}
     environment:
       REGION: ${file(./.env.yml):REGION, env:REGION}
       BUCKET: ${file(./.env.yml):FILE_BUCKET, env:FILE_BUCKET}
@@ -23,8 +28,6 @@ functions:
       - http:
           method: any
           path: /api/{proxy+}
-          cors:
-            origin: '*'
 resources:
   Resources:
     ProxyResource:

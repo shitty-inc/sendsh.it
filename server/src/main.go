@@ -142,7 +142,9 @@ func main() {
 	http.HandleFunc("/api/download", downloadHandler)
 	http.HandleFunc("/api/upload", uploadHandler)
 
-	handler := cors.Default().Handler(http.DefaultServeMux)
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"https://sendsh.it", "http://localhost:3000"},
+	})
 
-	algnhsa.ListenAndServe(handler, nil)
+	algnhsa.ListenAndServe(c.Handler(http.DefaultServeMux), nil)
 }

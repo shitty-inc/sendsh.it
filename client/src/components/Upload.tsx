@@ -124,7 +124,7 @@ class Upload extends React.Component<UploadProps, UploadState> {
         let response: AxiosResponse<{ id: string }>;
 
         try {
-            response = await axios.post('/api/upload', formData, config);
+            response = await axios.post('https://y4si76dsxj.execute-api.eu-west-1.amazonaws.com/dev/api/upload', formData, config);
         } catch (e) {
             this.props.setProgress(0);
 
