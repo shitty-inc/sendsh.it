@@ -11,7 +11,7 @@ interface WordArray {
 interface Arguments {
 	data: Buffer,
 	key: Buffer,
-	progress_hook: (progress: Progress) => void;
+	progress_hook?: (progress: Progress) => void;
 }
 
 interface Progress {

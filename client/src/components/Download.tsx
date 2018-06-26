@@ -71,7 +71,7 @@ class Download extends React.Component<DownloadProps, DownloadState> {
         let response: AxiosResponse<string>;
 
         try {
-    		response = await axios.get('https://y4si76dsxj.execute-api.eu-west-1.amazonaws.com/dev/api/download', config);
+    		response = await axios.get('https://new.sendsh.it/api/download', config);
     	} catch (e) {
     		this.props.setProgress(0);
 
