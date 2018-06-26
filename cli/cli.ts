@@ -1,22 +1,21 @@
-#!/usr/bin/env node
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import fs from 'fs';
 import * as triplesec from 'triplesec';
 import FormData from 'form-data';
 import ora from 'ora';
+import mime from 'mime';
 
 const args: string[] = process.argv.slice(2);
 const domain: string = 'https://new.sendsh.it';
 
 async function upload(fileName: string) {
-
     const spinner = new ora('Encrypting file').start();
     
     const key: string = await new Promise<string>(resolve => triplesec.prng.generate(24, (words: WordArray) =>
         resolve(words.to_hex())
     ));
 
-    const data: Buffer = await new Promise<Buffer>((resolve, reject) => fs.readFile(fileName, (err, data) => {
+    const fileData: Buffer = await new Promise<Buffer>((resolve, reject) => fs.readFile(fileName, (err, data) => {
         if (err) {
             return reject(err);
         }
@@ -24,9 +23,12 @@ async function upload(fileName: string) {
     }));
 
     // Handle file read error
-    
+
     const opts = {
-		data,
+		data: new Buffer(JSON.stringify({
+            url: `data:${mime.getType(fileName)};base64,${fileData.toString('base64')}`,
+            name: fileName,
+        })),
         key: new Buffer(key)
     };
 
@@ -38,10 +40,10 @@ async function upload(fileName: string) {
         resolve(buff);
     }));
 
-    spinner.text = 'Uploading file'
+    spinner.text = 'Uploading file';
 
     const formData: FormData = new FormData();
-    formData.append('upload', encrypted, 'encrypted');
+    formData.append('upload', encrypted.toString('hex'), 'encrypted');
 
     const response = await axios.post(`${domain}/api/upload`, formData, {
         headers: formData.getHeaders(),
