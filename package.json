@@ -1,21 +1,46 @@
 {
-  "name": "sendshit",
-  "description": "",
-  "version": "0.1.0",
-  "dependencies": {},
+  "name": "sendsh.it",
+  "version": "2.0.0",
+  "private": true,
+  "dependencies": {
+    "@types/clipboard": "^2.0.0",
+    "@types/file-saver": "^1.3.0",
+    "@types/react-router": "^4.0.25",
+    "@types/react-router-dom": "^4.2.6",
+    "axios": "^0.18.0",
+    "bootstrap": "^3.3.7",
+    "clipboard": "^2.0.1",
+    "file-saver": "^1.3.8",
+    "parse-data-uri": "^0.2.0",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-progress": "0.0.12",
+    "react-router-dom": "^4.2.2",
+    "react-scripts-ts": "2.15.1",
+    "triplesec": "^3.0.26"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/threesquared/sendsh.it"
+  },
+  "homepage": "https://sendsh.it/",
+  "author": "Ben Speakman",
+  "license": "MIT",
   "scripts": {
-    "server:build": "export GOPATH=~/.go && cd ~/.go/src/server && make",
-    "server:deploy": "AWS_PROFILE=personal sls deploy",
-    "server:local": "sam local start-api --profile personal",
-    "client:build": "cd client && npm run build",
-    "client:deploy": "AWS_PROFILE=personal sls client deploy",
-    "client:local": "cd client && npm run start",
-    "build": "npm run build:server && npm run build:client",
-    "deploy": "npm run build && npm run deploy:server && npm run deploy:client"
-    
+    "start": "react-scripts-ts start",
+    "build": "react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject"
   },
   "devDependencies": {
-    "serverless-finch": "^2.1.2",
-    "serverless-sam": "0.0.5"
+    "@types/enzyme": "^3.1.10",
+    "@types/jest": "^22.2.3",
+    "@types/node": "^10.0.8",
+    "@types/react": "^16.3.14",
+    "@types/react-dom": "^16.0.5",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "jest-mock-axios": "^2.1.11",
+    "typescript": "^2.8.3"
   }
 }
