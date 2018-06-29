@@ -1,0 +1,24 @@
+language: node_js
+
+node_js:
+  - 6
+
+cache:
+  directories:
+  - node_modules
+
+before_deploy:
+  - npm run build
+
+deploy:
+  provider: s3
+  access_key_id: AKIAI4TBOZIMRB6ADFMA
+  secret_access_key:
+    secure: BwJjYi8AV/O5/rX7df1wmiAlnBkHNkpRpdnGjkOOKitQsiaN8q0SfcPKtBbPol383AHVj+aazE++2SR3sOQsDlnmmv+gdIvG8ezHBP12xZ0xD5k2n7d45SBLfa5QJtwJNCCVsTOMaSjs1+wYMjw6HvEqgxpepfHHZ4BAxukD6Ju1qXW+lduI2jcn1aUSrBcLyMdcl08kVUszlj8k/r87Pj/Xgu69O7cc0i8a14QZ8jrtEySLQpQN2wiCvV2dMv+4/2dItJkbMu93Z2dz3mPriuV8LqPi+eyYN6U7sXUi6SGAxu1KJXOzyNvPsqhCYtCPIrDs2eOYz7SmMLHaNoqyxM3Bzhv8bvzV3rYTh3Igt5iBkPQbFHKAbbDHUMtO61qiRTblUvEOmY+KV0afWUpXg8gZeJ2plpgQ0sZcWAdeM5cyL72sex7p0CESSvnYs4xsN8/W8p0I9uowhoyXFQaTzuZV3bRei3luCvm2ALu65U8yDX+56PRDLOeLn/Ol1CLRGYR8ltljsuaR8lJp5WSd3OFmgZnE0+NuHboRV6VqiGnFTSK/A94UHfkMQj3j16iv+gEw6ARI4JTMRsJ8q6Qxh1crfrfYk2AhA3qTiFYJiyEwPtXDij0XmKXE39zf+xAlwIBL8WCj+wjlRX9Zy/SynPbuw/aashg0xwxCbynu334=
+  bucket: new.sendsh.it
+  skip_cleanup: true
+  region: eu-west-1
+  local-dir: build
+  on:
+    repo: send-shit/sendsh.it
+    branch: golang
