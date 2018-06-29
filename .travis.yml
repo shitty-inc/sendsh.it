@@ -20,5 +20,5 @@ deploy:
   region: eu-west-1
   local-dir: build
   on:
-    repo: send-shit/sendsh.it
+    repo: shitty-inc/sendsh.it
     branch: golang
