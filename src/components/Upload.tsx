@@ -124,7 +124,7 @@ class Upload extends React.Component<UploadProps, UploadState> {
         let response: AxiosResponse<{ id: string }>;
 
         try {
-            response = await axios.post('https://new.sendsh.it/api/upload', formData, config);
+            response = await axios.post('https://api.sendsh.it/upload', formData, config);
         } catch (e) {
             this.props.setProgress(0);
 
