@@ -14,7 +14,7 @@ export const readAsDataURL = (file: File): Promise<string> => {
         };
 
         reader.onload = () => {
-            resolve(reader.result);
+            resolve(reader.result as string);
         };
 
         reader.readAsDataURL(file);

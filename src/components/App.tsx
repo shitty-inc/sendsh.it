@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as Progress from 'react-progress';
+import React from 'react';
+import Progress from 'react-progress';
 import { RouteComponentProps } from 'react-router';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import Download, { DownloadRouteProps } from './Download';

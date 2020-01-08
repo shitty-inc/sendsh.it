@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import * as filesaver from 'file-saver';
-import * as parseDataUri from 'parse-data-uri';
-import * as React from 'react';
+import filesaver from 'file-saver';
+import parseDataUri from 'parse-data-uri';
+import React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { decrypt } from '../lib/crypto';
 import { stagePercent } from '../lib/file';
@@ -85,11 +85,17 @@ class Download extends React.Component<DownloadProps, DownloadState> {
         });
 
 		const buffer: Buffer = new Buffer(response.data, 'hex');
-		const decrypted: Buffer = await decrypt(buffer, key, obj => {
+		const decrypted: Buffer | null = await decrypt(buffer, key, obj => {
 			const stageCompletedPercent: number = (obj.i / obj.total) * 100;
 
             this.props.setProgress(stagePercent(stageCompletedPercent, this.downloadStages.length, this.downloadStages.indexOf(obj.what)));
 		});
+
+		if (!decrypted) {
+			return this.setState({
+                message: 'Failed to decrypt',
+            });
+		}
 
 		const { url, name } = JSON.parse(decrypted.toString());
 		const parsedUri: any = parseDataUri(url);

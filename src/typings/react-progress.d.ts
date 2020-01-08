@@ -6,7 +6,8 @@ declare namespace reactProgress {
 		speed?: number;
 	}
 
-    export class Progress extends React.Component<ProgressProps, {}> {
+    export default class Progress extends React.Component<ProgressProps, {}> {
+		new (props: ProgressProps, context?: any)
     }
 }
 declare var Progress: typeof reactProgress.Progress

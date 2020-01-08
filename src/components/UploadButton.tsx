@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { readAsDataURL } from '../lib/file'
 
 export interface UploadedFileData { name: string, url: string }

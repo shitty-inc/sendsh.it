@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import * as clipboard from 'clipboard';
-import * as React from 'react';
+import clipboard from 'clipboard';
+import React from 'react';
 import { encrypt, generatePassword } from '../lib/crypto';
 import { stagePercent } from '../lib/file';
 import UploadButton, { UploadedFileData } from './UploadButton';
@@ -26,10 +26,10 @@ class Upload extends React.Component<UploadProps, UploadState> {
 
     /**
      * Clipboard library
-     * 
+     *
      * @type {clipboard}
      */
-    public clipboard: clipboard;
+    public clipboard?: clipboard;
 
     /**
      * Order of upload stage events.
@@ -94,11 +94,17 @@ class Upload extends React.Component<UploadProps, UploadState> {
 
         const password: string = await generatePassword();
 
-        const encrypted: Buffer = await encrypt(new Buffer(JSON.stringify(data)), password, obj => {
+        const encrypted: Buffer | null = await encrypt(new Buffer(JSON.stringify(data)), password, obj => {
             const stageCompletedPercent: number = (obj.i / obj.total) * 100;
 
             this.props.setProgress(stagePercent(stageCompletedPercent, this.uploadStages.length, this.uploadStages.indexOf(obj.what)));
         });
+
+        if (!encrypted) {
+            return this.setState({
+                message: 'Failed to encrypt',
+            });
+        }
 
         const formData: FormData = new FormData();
         const blob: Blob = new Blob([encrypted.toString('hex')], {
@@ -130,13 +136,13 @@ class Upload extends React.Component<UploadProps, UploadState> {
 
             return this.setState({
                 message: e.message,
-            })
+            });
         }
 
         this.setState({
             message: 'Copy this shit',
             uploaded: true,
-            url: `${location.origin}/#/${response.data.id}/${password}`,
+            url: `${window.location.origin}/#/${response.data.id}/${password}`,
         });
 
         this.props.setProgress(100);

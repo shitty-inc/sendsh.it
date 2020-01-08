@@ -1,4 +1,4 @@
-import * as triplesec from 'triplesec';
+import triplesec from 'triplesec';
 
 /**
  * Generate a password from the PRNG.
@@ -16,14 +16,14 @@ export const generatePassword = (n: number = 24): Promise<string> =>
  * @param  {Buffer} data
  * @param  {string} key
  * @param  {Function} progress
- * @return {Promise<Buffer>}
+ * @return {Promise<Buffer | null>}
  */
-export const encrypt = (data: Buffer, key: string, progress: (obj: any) => void): Promise<Buffer> =>
+export const encrypt = (data: Buffer, key: string, progress: (obj: any) => void): Promise<Buffer | null> =>
 	new Promise((resolve, reject) => triplesec.encrypt({
 		data,
         key: new Buffer(key),
         progress_hook: progress
-	}, (err: Error, buff: Buffer) =>
+	}, (err, buff) =>
 		err ? reject(err) : resolve(buff)));
 
 /**
@@ -32,12 +32,12 @@ export const encrypt = (data: Buffer, key: string, progress: (obj: any) => void)
  * @param  {Buffer} data
  * @param  {string} key
  * @param  {Function} progress
- * @return {Promise<Buffer>}
+ * @return {Promise<Buffer | null>}
  */
-export const decrypt = (data: Buffer, key: string, progress: (obj: any) => void): Promise<Buffer> =>
+export const decrypt = (data: Buffer, key: string, progress: (obj: any) => void): Promise<Buffer | null> =>
 	new Promise((resolve, reject) => triplesec.decrypt({
 		data,
         key: new Buffer(key),
         progress_hook: progress
-	}, (err: Error, buff: Buffer) =>
+	}, (err, buff) =>
 		err ? reject(err) : resolve(buff)));
